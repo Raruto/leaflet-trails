@@ -1,0 +1,29 @@
+{
+  "name": "leaflet-trails",
+  "version": "0.0.1",
+  "description": "A Leaflet plugin that allows easy integration with Lonvia's Waymarked Trails Site",
+  "main": "leaflet-trails.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Raruto/leaflet-trails.git"
+  },
+  "keywords": [
+    "leaflet",
+    "waymarkedtrails",
+    "routes",
+    "osm"
+  ],
+  "author": "Raruto",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/Raruto/leaflet-trails/issues"
+  },
+  "homepage": "https://github.com/Raruto/leaflet-trails#readme",
+  "peerDependencies": {
+    "leaflet": "^1.3.4",
+    "leaflet-trails": "^0.0.1",
+  }
+}

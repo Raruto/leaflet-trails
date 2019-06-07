@@ -1,0 +1,27 @@
+.leaflet-popup .leaflet-trails {
+  list-style-type: none;
+  margin: 1em 0;
+  padding: 0;
+}
+
+.leaflet-popup .leaflet-trails a {
+  color: #000;
+  font-weight: 700;
+  text-decoration-line: none;
+  vertical-align: super;
+  font-style: italic;
+}
+
+.leaflet-popup .leaflet-trails a img {
+  height: 23px;
+  width: 23px;
+  vertical-align: text-bottom;
+  margin-right: 5px;
+}
+
+.leaflet-popup .leaflet-trails + .google-maps-link {
+  display: block;
+  text-align: center;
+  font-size: 10px;
+  color: #000;
+}
