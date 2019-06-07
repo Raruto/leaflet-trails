@@ -24,6 +24,6 @@
   "homepage": "https://github.com/Raruto/leaflet-trails#readme",
   "peerDependencies": {
     "leaflet": "^1.3.4",
-    "leaflet-trails": "^0.0.1",
+    "leaflet-trails": "^0.0.1"
   }
 }
