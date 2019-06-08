@@ -16,7 +16,7 @@ _For a working example see [demo](https://raruto.github.io/examples/leaflet-trai
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.3.4/dist/leaflet.js"></script>
     <!-- Leaflet-Pointable -->
-    <script src="https://unpkg.com/leaflet-pointable@0.0.1/leaflet-pointable.js"></script>
+    <script src="https://unpkg.com/leaflet-pointable@0.0.2/leaflet-pointable.js"></script>
     <!-- Leaflet-Trails -->
     <script src="https://unpkg.com/leaflet-trails@0.0.1/leaflet-trails.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/leaflet-trails@0.0.1/leaflet-trails.css">
@@ -67,7 +67,7 @@ _For a working example see [demo](https://raruto.github.io/examples/leaflet-trai
 
 ---
 
-**Compatibile with:** leaflet@1.3.4, leaflet-pointable@0.0.1
+**Compatibile with:** leaflet@1.3.4, leaflet-pointable@0.0.2
 
 ---
 
