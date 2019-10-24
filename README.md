@@ -1,7 +1,7 @@
 # leaflet-trails.js
 A Leaflet plugin that allows easy integration with Lonvia's Waymarked Trails Site
 
-_For a working example see one of the followinf examples:_
+_For a working example see one of the following examples:_
 
 - [simple](https://raruto.github.io/examples/leaflet-trails/leaflet-trails_simple.html)
 - [minimal](https://raruto.github.io/examples/leaflet-trails/leaflet-trails.html)
