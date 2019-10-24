@@ -1,27 +1,123 @@
+/* Custom trails popup */
 .leaflet-popup .leaflet-trails {
-  list-style-type: none;
-  margin: 1em 0;
-  padding: 0;
+	list-style-type: none;
+	margin: 1em 0;
+	padding: 0;
 }
 
 .leaflet-popup .leaflet-trails a {
-  color: #000;
-  font-weight: 700;
-  text-decoration-line: none;
-  vertical-align: super;
-  font-style: italic;
+	color: #000;
+	font-weight: 700;
+	text-decoration-line: none;
+	vertical-align: super;
+	font-style: italic;
 }
 
 .leaflet-popup .leaflet-trails a img {
-  height: 23px;
-  width: 23px;
-  vertical-align: text-bottom;
-  margin-right: 5px;
+	height: 23px;
+	width: 23px;
+	vertical-align: text-bottom;
+	margin-right: 5px;
 }
 
-.leaflet-popup .leaflet-trails + .google-maps-link {
-  display: block;
-  text-align: center;
-  font-size: 10px;
-  color: #000;
+.leaflet-popup .leaflet-trails+.google-maps-link {
+	display: block;
+	text-align: center;
+	font-size: 10px;
+	color: #000;
+}
+
+/* Custom trails button */
+.leaflet-trails-button {
+	padding: 0;
+}
+
+.leaflet-trails-button .leaflet-control-layers-overlays label {
+	padding: 5px;
+	cursor: pointer;
+	max-width: 20px;
+	overflow: visible;
+	white-space: nowrap;
+}
+
+.leaflet-trails-button .leaflet-control-layers-overlays label>div {
+	display: inline-block;
+	border-radius: 0 3px 3px 0;
+	pointer-events: none;
+}
+
+.leaflet-trails-button .leaflet-control-layers-overlays label:hover>div>span {
+	font-size: inherit;
+	padding-left: 5px;
+	padding-right: 5px;
+	margin: 0 8px;
+	border: 1px solid #666;
+}
+
+.leaflet-left .leaflet-trails-button label:before,
+.leaflet-right .leaflet-trails-button label:after {
+	background: url(images/map_pushpin.png) no-repeat;
+	background-size: auto;
+	width: 20px;
+	height: 20px;
+	display: inline-block;
+	content: "";
+	background-size: contain;
+	vertical-align: middle;
+	width: 20px;
+}
+
+.leaflet-trails-button .leaflet-control-layers-overlays input[type="checkbox"] {
+	display: none;
+}
+
+.leaflet-trails-button .leaflet-control-layers-overlays label>div>span {
+	font-size: 0;
+	background-color: #fff;
+	user-select: none;
+}
+
+.leaflet-trails-button .leaflet-control-layers-overlays input[type="checkbox"]:checked+span:after {
+	background-color: rgb(178, 216, 121);
+	border-radius: 3px;
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	content: "";
+	display: inline-block;
+	left: 0;
+	right: 0;
+	top: 0;
+	bottom: 0;
+	z-index: -1;
+}
+
+.leaflet-left .hiking-control label:before,
+.leaflet-right .hiking-control label:after {
+	background-image: url(images/map_hiking.png);
+}
+
+.leaflet-left .cycling-control label:before,
+.leaflet-right .cycling-control label:after {
+	background-image: url(images/map_cycling.png);
+}
+
+.leaflet-left .mtb-control label:before,
+.leaflet-right .mtb-control label:after {
+	background-image: url(images/map_mtb.png);
+}
+
+.leaflet-left .skating-control label:before,
+.leaflet-right .skating-control label:after {
+	background-image: url(images/map_skating.png);
+}
+
+.leaflet-left .riding-control label:before,
+.leaflet-right .riding-control label:after {
+	background-image: url(images/map_riding.png);
+}
+
+.leaflet-left .slopes-control label:before,
+.leaflet-right .slopes-control label:after {
+	background-image: url(images/map_slopes.png);
 }
