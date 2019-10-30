@@ -132,3 +132,11 @@
 	margin-top: 40px;
 	float: right;
 }
+
+.leaflet-trails-button .leaflet-control-layers-overlays:empty {
+	min-width: 30px;
+	min-height: 30px;
+	background: url(images/map_pushpin.png) center / 20px no-repeat;
+	border-radius: 3px;
+	filter: grayscale(1);
+}
