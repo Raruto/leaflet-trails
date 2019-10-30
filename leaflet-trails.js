@@ -318,10 +318,10 @@
 			if (typeof maxZoom === "undefined") maxZoom = typeof this.options.maxZoom !== "undefined" ? this.options.maxZoom : map.getMaxZoom();
 			if (typeof minZoom === "undefined") minZoom = typeof this.options.minZoom !== "undefined" ? this.options.minZoom : map.getMinZoom();
 			var hasLayer = map.hasLayer(this);
-			if (!hasLayer && (zoom >= minZoom && zoom < maxZoom)) {
+			if (!hasLayer && (zoom >= minZoom && zoom <= maxZoom)) {
 				this.addTo(map);
 				this.bringToFront();
-			} else if (hasLayer && (zoom < minZoom || zoom >= maxZoom)) {
+			} else if (hasLayer && (zoom < minZoom || zoom > maxZoom)) {
 				this.removeFrom(map);
 			}
 		}
