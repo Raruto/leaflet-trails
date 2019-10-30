@@ -42,7 +42,7 @@
 				routes = this.options.trailsControl;
 			}
 
-			this.once('plugins_loaded', function() {
+			this.once('initHooks_called', function() {
 
 				for (let id in routes) {
 					if (typeof routes[id].trails === 'object') {
