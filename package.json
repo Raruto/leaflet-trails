@@ -1,6 +1,6 @@
 {
   "name": "leaflet-trails",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "A Leaflet plugin that allows easy integration with Lonvia's Waymarked Trails Site",
   "main": "leaflet-trails.js",
   "scripts": {
