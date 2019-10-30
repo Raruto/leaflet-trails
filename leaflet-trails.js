@@ -45,6 +45,7 @@
 			this.once('initHooks_called', function() {
 
 				for (let id in routes) {
+
 					if (typeof routes[id].trails === 'object') {
 						overlays[id] = L.featureGroup();
 						for (let j = 0; j < routes[id].trails.length; j++) {
@@ -57,7 +58,7 @@
 								})
 							);
 						}
-					} else {
+					} else if (typeof routes[id].trails === 'string') {
 						overlays[id] = L.tileLayer('https://tile.waymarkedtrails.org/{id}/{z}/{x}/{y}.png', {
 							id: routes[id].trails,
 							pointable: true,
@@ -65,7 +66,8 @@
 							maxZoom: 18,
 						});
 					}
-					if (typeof routes[id].autoToggle === "undefined" || routes[id].autoToggle) {
+
+					if (overlays[id] && (typeof routes[id].autoToggle === "undefined" || routes[id].autoToggle)) {
 						overlays[id].autoToggle(this, routes[id].minZoom, routes[id].maxZoom);
 					}
 
@@ -73,13 +75,19 @@
 						position: "bottomleft",
 						collapsed: false,
 						// inline: true,
-						className: 'leaflet-trails-button ' + id.toLowerCase() + '-control',
+						className: 'leaflet-trails-button ' + (routes[id].className || id.toLowerCase()) + '-control',
 					});
 
-					controls[id].addOverlay(overlays[id], id.charAt(0).toUpperCase() + id.slice(1));
+					if (overlays[id]) {
+						controls[id].addOverlay(overlays[id], (routes[id].label || id.charAt(0).toUpperCase() + id.slice(1)));
+					}
 					controls[id].addTo(this);
 
 				}
+
+				if (this.controls) this.controls.trails = controls;
+
+        this.fire('trailsControl_loaded');
 
 			}, this);
 
