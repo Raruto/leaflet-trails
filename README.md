@@ -6,6 +6,7 @@ _For a working example see one of the following examples:_
 - [simple](https://raruto.github.io/examples/leaflet-trails/leaflet-trails_simple.html)
 - [minimal](https://raruto.github.io/examples/leaflet-trails/leaflet-trails.html)
 - [grouped](https://raruto.github.io/examples/leaflet-trails/leaflet-trails_grouped.html)
+- [leaflet-ui](https://raruto.github.io/examples/leaflet-trails/leaflet-trails_ui.html)
 
 
 ---
