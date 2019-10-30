@@ -10,16 +10,81 @@
 
 	L.Map.addInitHook(function() {
 		this._trails_api = new L.Class.WaymarkedTrails(this);
-		this.on("layeradd", function(e) {
-			if (e.layer.options.pointable) {
-				this._trails_api.addRouteTag(e.layer.options.id || e.layer.options.route_tag);
+		this.on("layeradd", function(e) { if (e.layer.options.pointable) this._trails_api.addRouteTag(e.layer.options.id || e.layer.options.route_tag); });
+		this.on("layerremove", function(e) { if (e.layer.options.pointable) this._trails_api.removeRouteTag(e.layer.options.id || e.layer.options.route_tag); });
+
+		if (this.options.trailsControl) {
+
+			let routes = {};
+			let overlays = {};
+			let controls = {};
+
+			if (this.options.trailsControl === true) {
+				routes = {
+					"Hiking": {
+						trails: 'hiking',
+						autoToggle: false,
+					},
+					"Cycling": {
+						trails: ['cycling', 'mtb'],
+						autoToggle: false,
+					},
+					"Slopes": {
+						trails: ['skating', 'slopes'],
+						autoToggle: false,
+					},
+					"Riding": {
+						trails: 'riding',
+						autoToggle: false,
+					},
+				};
+			} else if (typeof this.options.trailsControl === "object") {
+				routes = this.options.trailsControl;
 			}
-		});
-		this.on("layerremove", function(e) {
-			if (e.layer.options.pointable) {
-				this._trails_api.removeRouteTag(e.layer.options.id || e.layer.options.route_tag);
-			}
-		});
+
+			this.once('plugins_loaded', function() {
+
+				for (let id in routes) {
+					if (typeof routes[id].trails === 'object') {
+						overlays[id] = L.featureGroup();
+						for (let j = 0; j < routes[id].trails.length; j++) {
+							overlays[id].addLayer(
+								L.tileLayer('https://tile.waymarkedtrails.org/{id}/{z}/{x}/{y}.png', {
+									id: routes[id].trails[j],
+									pointable: true,
+									attribution: '&copy; <a href="http://waymarkedtrails.org">Sarah Hoffmann</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)',
+									maxZoom: 18,
+								})
+							);
+						}
+					} else {
+						overlays[id] = L.tileLayer('https://tile.waymarkedtrails.org/{id}/{z}/{x}/{y}.png', {
+							id: routes[id].trails,
+							pointable: true,
+							attribution: '&copy; <a href="http://waymarkedtrails.org">Sarah Hoffmann</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)',
+							maxZoom: 18,
+						});
+					}
+					if (typeof routes[id].autoToggle === "undefined" || routes[id].autoToggle) {
+						overlays[id].autoToggle(this, routes[id].minZoom, routes[id].maxZoom);
+					}
+
+					controls[id] = L.control.layers(null, null, {
+						position: "bottomleft",
+						collapsed: false,
+						// inline: true,
+						className: 'leaflet-trails-button ' + id.toLowerCase() + '-control',
+					});
+
+					controls[id].addOverlay(overlays[id], id.charAt(0).toUpperCase() + id.slice(1));
+					controls[id].addTo(this);
+
+				}
+
+			}, this);
+
+		}
+
 	});
 
 	L.Class.WaymarkedTrails = L.Class.extend({
@@ -49,7 +114,10 @@
 			});
 
 			var html = this._toHTML(response);
-			if (!html) return;
+			if (!html) {
+				console.warn("Overpass data not found for this location.");
+				return;
+			}
 
 			html += this._googleMapsLink(request.latlng, this._map.getZoom());
 
@@ -237,7 +305,7 @@
 			map.on('zoom', function(e) {
 				var zoom = map.getZoom();
 				if (typeof maxZoom === "undefined") maxZoom = typeof this.options.maxZoom !== "undefined" ? this.options.maxZoom : map.getMaxZoom();
-				if (typeof minZoom === "undefined") maxZoom = typeof this.options.minZoom !== "undefined" ? this.options.minZoom : map.getMinZoom();
+				if (typeof minZoom === "undefined") minZoom = typeof this.options.minZoom !== "undefined" ? this.options.minZoom : map.getMinZoom();
 				var hasLayer = map.hasLayer(this);
 				if (!hasLayer && (zoom >= minZoom && zoom < maxZoom)) {
 					this.addTo(map);

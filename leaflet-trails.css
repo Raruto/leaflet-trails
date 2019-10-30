@@ -121,3 +121,14 @@
 .leaflet-right .slopes-control label:after {
 	background-image: url(images/map_slopes.png);
 }
+
+/* Custom leaflet-ui */
+.leaflet-control-minimap {
+	clear: none;
+}
+
+.leaflet-trails-button {
+	clear: none;
+	margin-top: 40px;
+	float: right;
+}
