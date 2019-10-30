@@ -87,7 +87,7 @@
 
 				if (this.controls) this.controls.trails = controls;
 
-        this.fire('trailsControl_loaded');
+				this.fire('trailsControl_loaded');
 
 			}, this);
 
@@ -310,18 +310,20 @@
 
 	L.Layer.include({
 		autoToggle: function(map, minZoom, maxZoom) {
-			map.on('zoom', function(e) {
-				var zoom = map.getZoom();
-				if (typeof maxZoom === "undefined") maxZoom = typeof this.options.maxZoom !== "undefined" ? this.options.maxZoom : map.getMaxZoom();
-				if (typeof minZoom === "undefined") minZoom = typeof this.options.minZoom !== "undefined" ? this.options.minZoom : map.getMinZoom();
-				var hasLayer = map.hasLayer(this);
-				if (!hasLayer && (zoom >= minZoom && zoom < maxZoom)) {
-					this.addTo(map);
-					this.bringToFront();
-				} else if (hasLayer && (zoom < minZoom || zoom >= maxZoom)) {
-					this.removeFrom(map);
-				}
-			}, this);
+			this._autoToggle(minZoom, maxZoom);
+			map.on('zoom', L.bind(this._autoToggle, this, minZoom, maxZoom));
+		},
+		_autoToggle: function(minZoom, maxZoom) {
+			var zoom = map.getZoom();
+			if (typeof maxZoom === "undefined") maxZoom = typeof this.options.maxZoom !== "undefined" ? this.options.maxZoom : map.getMaxZoom();
+			if (typeof minZoom === "undefined") minZoom = typeof this.options.minZoom !== "undefined" ? this.options.minZoom : map.getMinZoom();
+			var hasLayer = map.hasLayer(this);
+			if (!hasLayer && (zoom >= minZoom && zoom < maxZoom)) {
+				this.addTo(map);
+				this.bringToFront();
+			} else if (hasLayer && (zoom < minZoom || zoom >= maxZoom)) {
+				this.removeFrom(map);
+			}
 		}
 	});
 
