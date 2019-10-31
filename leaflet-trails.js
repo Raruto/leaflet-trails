@@ -310,7 +310,7 @@
 
 	L.Layer.include({
 		autoToggle: function(map, minZoom, maxZoom) {
-			this._autoToggle(minZoom, maxZoom);
+			this._autoToggle(map, minZoom, maxZoom);
 			map.on('zoom', L.bind(this._autoToggle, this, map, minZoom, maxZoom));
 		},
 		_autoToggle: function(map, minZoom, maxZoom) {
