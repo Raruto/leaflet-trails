@@ -311,9 +311,9 @@
 	L.Layer.include({
 		autoToggle: function(map, minZoom, maxZoom) {
 			this._autoToggle(minZoom, maxZoom);
-			map.on('zoom', L.bind(this._autoToggle, this, minZoom, maxZoom));
+			map.on('zoom', L.bind(this._autoToggle, this, map, minZoom, maxZoom));
 		},
-		_autoToggle: function(minZoom, maxZoom) {
+		_autoToggle: function(map, minZoom, maxZoom) {
 			var zoom = map.getZoom();
 			if (typeof maxZoom === "undefined") maxZoom = typeof this.options.maxZoom !== "undefined" ? this.options.maxZoom : map.getMaxZoom();
 			if (typeof minZoom === "undefined") minZoom = typeof this.options.minZoom !== "undefined" ? this.options.minZoom : map.getMinZoom();
