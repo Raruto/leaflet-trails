@@ -35,7 +35,7 @@
 .leaflet-trails-button .leaflet-control-layers-overlays label {
 	padding: 5px;
 	cursor: pointer;
-	max-width: 20px;
+	max-width: 30px;
 	overflow: visible;
 	white-space: nowrap;
 }
