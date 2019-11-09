@@ -57,12 +57,12 @@
 .leaflet-left .leaflet-trails-button label:before,
 .leaflet-right .leaflet-trails-button label:after {
 	background: url(images/map_pushpin.png) no-repeat;
-	background-size: auto;
+	background-position: center;
+	background-size: contain;
 	width: 20px;
 	height: 20px;
 	display: inline-block;
 	content: "";
-	background-size: contain;
 	vertical-align: middle;
 	width: 20px;
 }
