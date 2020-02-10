@@ -49,34 +49,17 @@
 					if (typeof routes[id].trails === 'object') {
 						overlays[id] = L.featureGroup();
 						for (let j = 0; j < routes[id].trails.length; j++) {
-							overlays[id].addLayer(
-								L.tileLayer('https://tile.waymarkedtrails.org/{id}/{z}/{x}/{y}.png', {
-									id: routes[id].trails[j],
-									pointable: true,
-									attribution: '&copy; <a href="http://waymarkedtrails.org">Sarah Hoffmann</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)',
-									maxZoom: 18,
-								})
-							);
+							overlays[id].addLayer(tileLayer(routes[id].trails[j], routes[id]));
 						}
 					} else if (typeof routes[id].trails === 'string') {
-						overlays[id] = L.tileLayer('https://tile.waymarkedtrails.org/{id}/{z}/{x}/{y}.png', {
-							id: routes[id].trails,
-							pointable: true,
-							attribution: '&copy; <a href="http://waymarkedtrails.org">Sarah Hoffmann</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)',
-							maxZoom: 18,
-						});
+						overlays[id] = tileLayer(routes[id].trails, routes[id]);
 					}
 
 					if (overlays[id] && (typeof routes[id].autoToggle === "undefined" || routes[id].autoToggle)) {
 						overlays[id].autoToggle(this, routes[id].minZoom, routes[id].maxZoom);
 					}
 
-					controls[id] = L.control.layers(null, null, {
-						position: "bottomleft",
-						collapsed: false,
-						// inline: true,
-						className: 'leaflet-trails-button ' + (routes[id].className || id.toLowerCase()) + '-control',
-					});
+					controls[id] = controlLayers(id, routes[id]);
 
 					if (overlays[id]) {
 						controls[id].addOverlay(overlays[id], (routes[id].label || id.charAt(0).toUpperCase() + id.slice(1)));
@@ -94,6 +77,26 @@
 		}
 
 	});
+
+	function tileLayer(route_id, options) {
+		let opts = L.extend({}, {
+			id: route_id,
+			pointable: true,
+			attribution: '&copy; <a href="http://waymarkedtrails.org">Sarah Hoffmann</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)',
+			maxZoom: 18,
+		}, options);
+		['trails', 'autoToggle', 'minZoom'].forEach(e => delete opts[e]);
+		return L.tileLayer('https://tile.waymarkedtrails.org/{id}/{z}/{x}/{y}.png', opts);
+	}
+
+	function controlLayers(route_id, options) {
+		return L.control.layers(null, null, {
+			position: "bottomleft",
+			collapsed: false,
+			// inline: true,
+			className: 'leaflet-trails-button ' + (options.className || route_id.toLowerCase()) + '-control',
+		});
+	}
 
 	L.Class.WaymarkedTrails = L.Class.extend({
 
