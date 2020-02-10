@@ -8,6 +8,7 @@ _For a working example see one of the following examples:_
 - [grouped](https://raruto.github.io/leaflet-trails/examples/leaflet-trails_grouped.html)
 - [leaflet-ui](https://raruto.github.io/leaflet-trails/examples/leaflet-trails_ui.html)
 - [overlays](https://raruto.github.io/leaflet-trails/examples/leaflet-trails_overlays.html)
+- [pane](https://raruto.github.io/leaflet-trails/examples/leaflet-trails_pane.html)
 
 ---
 
