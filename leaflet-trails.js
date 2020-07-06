@@ -187,9 +187,8 @@
 			var url = 'https://overpass-api.de/api/interpreter?data=' + encodeURIComponent(queryString) + '&callback=?';
 			this.ajax(url, function(xmlhttp) {
 				this._pendingRequest = false;
-				var json = JSON.parse(xmlhttp.responseText);
-				action(json);
-			});
+				action(JSON.parse(xmlhttp.responseText));
+			}.bind(this));
 		},
 
 		ajax: function(xmldocpath, completecallback, errorcallback) {
