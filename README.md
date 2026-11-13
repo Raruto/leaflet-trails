@@ -83,7 +83,7 @@ _For a working example see one of the following examples:_
 **Compatible with:**
 [![Leaflet 1.9.4](https://img.shields.io/badge/Leaflet-1.9.4-1EB300.svg?style=flat)](https://leafletjs.com/reference.html)
 [![Leaflet 2.0.0-beta.3](https://img.shields.io/badge/Leaflet-2.0.0--beta.3-1EB300.svg?style=flat)](https://leafletjs.com/reference.html)
-[![leaflet-pointable 0.2.1](https://img.shields.io/badge/leaflet-pointable-0.2.1-1EB300.svg?style=flat)](https://github.com/Raruto/leaflet-pointable)
+[![leaflet-pointable 0.2.1](https://img.shields.io/badge/leaflet--pointable-0.2.1-1EB300.svg?style=flat)](https://github.com/Raruto/leaflet-pointable)
 
 
 ---
