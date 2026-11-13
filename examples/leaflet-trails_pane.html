@@ -7,18 +7,18 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 
 	<!-- Leaflet -->
-	<script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"></script>
-	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css">
+	<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 
 	<!-- Leaflet-Pointable -->
-	<script src="https://unpkg.com/leaflet-pointable@0.0.4/leaflet-pointable.js"></script>
+	<script src="https://unpkg.com/leaflet-pointable@0.2.1/leaflet-pointable.js"></script>
 
 	<!-- Leaflet-Trails -->
-	<link rel="stylesheet" href="https://unpkg.com/leaflet-trails@0.1.8/leaflet-trails.css">
-	<script src="https://unpkg.com/leaflet-pointable@0.1.8/leaflet-trails.js"></script>
+	<link rel="stylesheet" href="https://unpkg.com/leaflet-trails@0.2.1/leaflet-trails.min.css">
+	<script src="https://unpkg.com/leaflet-trails@0.2.1/leaflet-trails.min.js"></script>
 
 	<!-- Leaflet-UI -->
-	<script src="https://unpkg.com/leaflet-ui@0.4.0/dist/leaflet-ui.js"></script>
+	<script src="https://unpkg.com/leaflet-ui@0.8.0/dist/leaflet-ui.js"></script>
 
 	<style>
 		html,
@@ -41,7 +41,7 @@
 	<div id="map" class="map"></div>
 
 	<script>
-		var map = L.map('map', {
+		let map = L.map('map', {
 			center: [43.5978, 12.7059],
 			zoom: 5,
 			gestureHandling: false,
@@ -64,9 +64,9 @@
 				},
 			},
 			plugins: [
-				// "leaflet-trails@0.1.1/leaflet-trails.js",
-				// "leaflet-trails@0.1.1/leaflet-trails.css",
-				// "leaflet-pointable@0.0.2/leaflet-pointable.js",
+				// "leaflet-trails@0.2.1/leaflet-trails.js",
+				// "leaflet-trails@0.2.1/leaflet-trails.css",
+				// "leaflet-pointable@0.2.1/leaflet-pointable.js",
 			],
 		});
 	</script>

@@ -7,8 +7,8 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 
 	<!-- Leaflet-UI -->
-	<script src="https://unpkg.com/leaflet@1.3.4/dist/leaflet.js"></script>
-	<script src="https://unpkg.com/leaflet-ui@0.3.2/dist/leaflet-ui.js"></script>
+	<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+	<script src="https://unpkg.com/leaflet-ui@0.8.0/dist/leaflet-ui.js"></script>
 
 	<style>
 		html,
@@ -43,26 +43,26 @@
 	<div id="map" class="map"></div>
 
 	<script>
-		var map = L.map('map', {
+		let map = L.map('map', {
 			center: [43.5978, 12.7059],
 			zoom: 5,
 			gestureHandling: false,
 			resizerControl: true,
 			plugins: [
-				"leaflet-trails@0.1.1/leaflet-trails.js",
-				"leaflet-trails@0.1.1/leaflet-trails.css",
-				"leaflet-pointable@0.0.2/leaflet-pointable.js",
+				"leaflet-trails@0.2.1/leaflet-trails.js",
+				"leaflet-trails@0.2.1/leaflet-trails.css",
+				"leaflet-pointable@0.2.1/leaflet-pointable.js",
 			],
 		});
 
-		var trails = {
+		let trails = {
 			"Hiking": ['hiking'],
 			"Cycling": ['cycling', 'mtb'],
 			"Slopes": ['skating', 'slopes'],
 			"Riding": ['riding'],
 		};
-		var overlays = {};
-		var controls = {};
+		let overlays = {};
+		let controls = {};
 
 		map.once('plugins_loaded', function() {
 

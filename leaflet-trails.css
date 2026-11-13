@@ -40,13 +40,15 @@
 	white-space: nowrap;
 }
 
-.leaflet-trails-button .leaflet-control-layers-overlays label>div {
+.leaflet-trails-button .leaflet-control-layers-overlays label>div,
+.leaflet-trails-button .leaflet-control-layers-overlays label>span {
 	display: inline-block;
 	border-radius: 0 3px 3px 0;
 	pointer-events: none;
 }
 
-.leaflet-trails-button .leaflet-control-layers-overlays label:hover>div>span {
+.leaflet-trails-button .leaflet-control-layers-overlays label:hover>div>span,
+.leaflet-trails-button .leaflet-control-layers-overlays label:hover>span>span {
 	font-size: inherit;
 	padding-left: 5px;
 	padding-right: 5px;
@@ -71,7 +73,8 @@
 	display: none;
 }
 
-.leaflet-trails-button .leaflet-control-layers-overlays label>div>span {
+.leaflet-trails-button .leaflet-control-layers-overlays label>div>span,
+.leaflet-trails-button .leaflet-control-layers-overlays label>span>span {
 	font-size: 0;
 	background-color: #fff;
 	user-select: none;

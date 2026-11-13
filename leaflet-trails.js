@@ -7,8 +7,9 @@
  * @desc Leaflet plugin that allows easy integration with Lonvia's Waymarked Trails Site
  */
 (function() {
+	const LeafletMap = L.LeafletMap || L.Map;
 
-	L.Map.addInitHook(function() {
+	LeafletMap.addInitHook(function() {
 		this._trails_api = new L.Class.WaymarkedTrails(this);
 		this.on("layeradd", function(e) { if (e.layer.options.pointable) this._trails_api.addRouteTag(e.layer.options.id || e.layer.options.route_tag); });
 		this.on("layerremove", function(e) { if (e.layer.options.pointable) this._trails_api.removeRouteTag(e.layer.options.id || e.layer.options.route_tag); });
@@ -16,8 +17,8 @@
 		if (this.options.trailsControl) {
 
 			let routes = {};
-			let overlays = {};
-			let controls = {};
+			const overlays = {};
+			const controls = {};
 
 			if (this.options.trailsControl === true) {
 				routes = {
@@ -47,7 +48,7 @@
 				for (let id in routes) {
 
 					if (typeof routes[id].trails === 'object') {
-						overlays[id] = L.featureGroup();
+						overlays[id] = new L.FeatureGroup();
 						for (let j = 0; j < routes[id].trails.length; j++) {
 							overlays[id].addLayer(tileLayer(routes[id].trails[j], routes[id]));
 						}
@@ -79,18 +80,18 @@
 	});
 
 	function tileLayer(route_id, options) {
-		let opts = L.extend({}, {
+		const opts = Object.assign({}, {
 			id: route_id,
 			pointable: true,
 			attribution: '&copy; <a href="http://waymarkedtrails.org">Sarah Hoffmann</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)',
 			maxZoom: 18,
 		}, options);
 		['trails', 'autoToggle', 'minZoom'].forEach(e => delete opts[e]);
-		return L.tileLayer('https://tile.waymarkedtrails.org/{id}/{z}/{x}/{y}.png', opts);
+		return new L.TileLayer('https://tile.waymarkedtrails.org/{id}/{z}/{x}/{y}.png', opts);
 	}
 
 	function controlLayers(route_id, options) {
-		return L.control.layers(null, null, {
+		return new (L.LayersControl || L.Control.Layers)(null, null, {
 			position: "bottomleft",
 			collapsed: false,
 			// inline: true,
@@ -98,33 +99,30 @@
 		});
 	}
 
-	L.Class.WaymarkedTrails = L.Class.extend({
-
-		includes: L.Evented ? L.Evented.prototype : L.Mixin.Events,
-
-		initialize: function(map) {
+	const waymarkedMethods = {
+		_initializeWaymarkedTrails(map) {
 			this.route_tags = [];
 			this._map = map;
 			this._map.on("pointable_mouseclick", this._onPointableMouseClick, this);
 		},
 
-		_onPointableMouseClick: function(e) {
-			var query = this.buildQuery(e.latlng, this._map.getZoom());
+		_onPointableMouseClick(e) {
+			const query = this.buildQuery(e.latlng, this._map.getZoom());
 			if (!query) return;
 
-			this.getData(query, L.bind(this._onOverpassResponse, this, {
+			this.getData(query, this._onOverpassResponse.bind(this, {
 				latlng: e.latlng,
 				query: query,
 			}));
 		},
 
-		_onOverpassResponse: function(request, response) {
+		_onOverpassResponse(request, response) {
 			this._map.fire('overpass_response', {
 				request: request,
 				response: response
 			});
 
-			var html = this._toHTML(response);
+			let html = this._toHTML(response);
 			if (!html) {
 				console.warn("Overpass data not found for this location.");
 				return;
@@ -135,11 +133,11 @@
 			this._map.openPopup(html, request.latlng);
 		},
 
-		buildQuery: function(latlng, zoom) {
-			var i, route_tag, route_tags = "";
-			var network_tags, network = "";
+		buildQuery(latlng, zoom) {
+			let i, route_tag, route_tags = "";
+			let network_tags, network = "";
 
-			var radius = 5000;
+			let radius = 5000;
 			if (zoom >= 17) radius = 5;
 			else if (zoom >= 15) radius = 10;
 			else if (zoom >= 12) radius = 50;
@@ -176,23 +174,23 @@
 				return false;
 			}
 
-			var overpass_query = '[out:json];(relation["route"~"' + route_tags + '"]' + network + '(around:' + radius + ',' + latlng.lat + ',' + latlng.lng + '););out;>;';
+			const overpass_query = '[out:json];(relation["route"~"' + route_tags + '"]' + network + '(around:' + radius + ',' + latlng.lat + ',' + latlng.lng + '););out;>;';
 
 			return overpass_query;
 		},
 
-		getData: function(queryString, action) {
+		getData(queryString, action) {
 			this._pendingRequest = true;
 			// Construct the query URL to get data from the Overpass Turbo API Interpreter
-			var url = 'https://overpass-api.de/api/interpreter?data=' + encodeURIComponent(queryString) + '&callback=?';
+			const url = 'https://overpass-api.de/api/interpreter?data=' + encodeURIComponent(queryString) + '&callback=?';
 			this.ajax(url, function(xmlhttp) {
 				this._pendingRequest = false;
 				action(JSON.parse(xmlhttp.responseText));
 			}.bind(this));
 		},
 
-		ajax: function(xmldocpath, completecallback, errorcallback) {
-			var xmlhttp = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
+		ajax(xmldocpath, completecallback, errorcallback) {
+			const xmlhttp = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
 			xmlhttp.onreadystatechange = function() {
 				if (xmlhttp.readyState === 4) {
 					if (xmlhttp.status === 200 && completecallback) {
@@ -213,13 +211,13 @@
 			return xmlhttp;
 		},
 
-		addRouteTag: function(route_tag) {
+		addRouteTag(route_tag) {
 			this.route_tags.push(route_tag);
 			return this.route_tags;
 		},
 
-		removeRouteTag: function(route_tag) {
-			for (var i in this.route_tags) {
+		removeRouteTag(route_tag) {
+			for (let i in this.route_tags) {
 				if (this.route_tags[i] && this.route_tags[i] === route_tag) {
 					this.route_tags.splice(i, 1);
 				}
@@ -227,14 +225,14 @@
 			return this.route_tags;
 		},
 
-		_toHTML: function(data) {
-			var i, relation;
-			var route_id, route_name, route_desc, route_ref, osmc_symbol;
+		_toHTML(data) {
+			let i, relation;
+			let route_id, route_name, route_desc, route_ref, osmc_symbol;
 
-			var link, html = "";
-			var ul, li, img;
+			let link, html = "";
+			let ul, li, img;
 
-			var baseUrl, baseSymbol, baseRoute;
+			let baseUrl, baseSymbol, baseRoute;
 
 			ul = document.createElement('ul');
 			ul.className = "leaflet-trails";
@@ -299,8 +297,8 @@
 			return html;
 		},
 
-		_googleMapsLink: function(latlng, zoom) {
-			var link = document.createElement('a');
+		_googleMapsLink(latlng, zoom) {
+			const link = document.createElement('a');
 			link.className = "google-maps-link";
 			link.href = "https://maps.google.com/?q=loc:" + latlng.lat + "," + latlng.lng + "&t=h&z=" + zoom;
 			link.target = "_blank";
@@ -308,18 +306,32 @@
 			return link.outerHTML;
 		},
 
-	});
+	};
+
+	if (L.version.startsWith('1.')) {
+		waymarkedMethods.initialize = waymarkedMethods._initializeWaymarkedTrails;
+		waymarkedMethods.includes = L.Evented.prototype;
+		L.Class.WaymarkedTrails = L.Class.extend(waymarkedMethods);
+	} else {
+		L.Class.WaymarkedTrails = class extends L.Evented {
+			constructor(map) {
+				super();
+				this._initializeWaymarkedTrails(map);
+			}
+		};
+		L.Class.WaymarkedTrails.include(waymarkedMethods);
+	}
 
 	L.Layer.include({
-		autoToggle: function(map, minZoom, maxZoom) {
+		autoToggle(map, minZoom, maxZoom) {
 			this._autoToggle(map, minZoom, maxZoom);
-			map.on('zoom', L.bind(this._autoToggle, this, map, minZoom, maxZoom));
+			map.on('zoom', this._autoToggle.bind(this, map, minZoom, maxZoom));
 		},
-		_autoToggle: function(map, minZoom, maxZoom) {
-			var zoom = map.getZoom();
+		_autoToggle(map, minZoom, maxZoom) {
+			const zoom = map.getZoom();
 			if (typeof maxZoom === "undefined") maxZoom = typeof this.options.maxZoom !== "undefined" ? this.options.maxZoom : map.getMaxZoom();
 			if (typeof minZoom === "undefined") minZoom = typeof this.options.minZoom !== "undefined" ? this.options.minZoom : map.getMinZoom();
-			var hasLayer = map.hasLayer(this);
+			const hasLayer = map.hasLayer(this);
 			if (!hasLayer && (zoom >= minZoom && zoom <= maxZoom)) {
 				this.addTo(map);
 				this.bringToFront();
