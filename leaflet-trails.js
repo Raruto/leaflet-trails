@@ -83,6 +83,7 @@
 		const opts = Object.assign({}, {
 			id: route_id,
 			pointable: true,
+			crossOrigin: true,
 			attribution: '&copy; <a href="http://waymarkedtrails.org">Sarah Hoffmann</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)',
 			maxZoom: 18,
 		}, options);
@@ -107,108 +108,64 @@
 		},
 
 		_onPointableMouseClick(e) {
-			const query = this.buildQuery(e.latlng, this._map.getZoom());
-			if (!query) return;
-
-			this.getData(query, this._onOverpassResponse.bind(this, {
-				latlng: e.latlng,
-				query: query,
-			}));
-		},
-
-		_onOverpassResponse(request, response) {
-			this._map.fire('overpass_response', {
-				request: request,
-				response: response
+			const pointed = [];
+			this._map.eachLayer(layer => {
+				if (layer.options.pointable && layer.isPointablePixel && layer.isPointablePixel()) {
+					pointed.push(layer.options.id || layer.options.route_tag);
+				}
 			});
+			const routes = [...new Set(pointed.length ? pointed : this.route_tags)];
+			if (!routes.length) return;
 
-			let html = this._toHTML(response);
-			if (!html) {
-				console.warn("Overpass data not found for this location.");
-				return;
-			}
+			if (this._trailsRequest) this._trailsRequest.abort();
+			const controller = this._trailsRequest = new AbortController();
+			const zoom = this._map.getZoom();
+			const query = this.buildQuery(e.latlng, zoom);
+			const popup = new L.Popup().setLatLng(e.latlng).setContent('Loading trails...').openOn(this._map);
+			const timeout = setTimeout(() => controller.abort(), 15000);
 
-			html += this._googleMapsLink(request.latlng, this._map.getZoom());
-
-			this._map.openPopup(html, request.latlng);
+			this.getData(routes, query.bbox, controller.signal).then(async results => {
+				let nearby = false;
+				if (query.retryBbox && !controller.signal.aborted &&
+					results.every(result => result.status === 'fulfilled' && !result.value.results.length)) {
+					results = await this.getData(routes, query.retryBbox, controller.signal);
+					nearby = true;
+				}
+				clearTimeout(timeout);
+				if (this._trailsRequest !== controller) return;
+				this._trailsRequest = null;
+				if (!this._map.hasLayer(popup)) return;
+				const content = this._toHTML(results, nearby);
+				const mapsLink = document.createElement('div');
+				mapsLink.innerHTML = this._googleMapsLink(e.latlng, zoom);
+				content.appendChild(mapsLink.firstChild);
+				popup.setContent(content);
+				this._map.fire('trails_response', { latlng: e.latlng, results: results });
+			});
 		},
 
 		buildQuery(latlng, zoom) {
-			let i, route_tag, route_tags = "";
-			let network_tags, network = "";
-
-			let radius = 5000;
-			if (zoom >= 17) radius = 5;
-			else if (zoom >= 15) radius = 10;
-			else if (zoom >= 12) radius = 50;
-			else if (zoom <= 8) radius = 5000;
-			else radius = 100;
-
-			// network_tags = '^iwn$';
-			// if (zoom >= 8) network_tags += '|^nwn$';
-			// if (zoom >= 9) network_tags += '|^rwn$';
-			// if (zoom >= 10) network_tags = false;
-			// network = network_tags ? '["network"~"' + network_tags + '"]' : '';
-
-			for (i = 0; i < this.route_tags.length; i++) {
-				switch (this.route_tags[i]) {
-					case 'cycling':
-						route_tag = 'bicycle';
-						break;
-					case 'riding':
-						route_tag = 'horse';
-						break;
-					case 'skating':
-						route_tag = 'inline_skates';
-						break;
-					default:
-						route_tag = this.route_tags[i];
-						break;
-				}
-				route_tags += "^" + route_tag + "$|";
-			}
-
-			route_tags = route_tags.replace(/\|$/, '');
-
-			if (!route_tags) {
-				return false;
-			}
-
-			const overpass_query = '[out:json];(relation["route"~"' + route_tags + '"]' + network + '(around:' + radius + ',' + latlng.lat + ',' + latlng.lng + '););out;>;';
-
-			return overpass_query;
+			const radius = zoom >= 17 ? 5 : zoom >= 15 ? 10 : zoom >= 12 ? 50 : zoom <= 8 ? 5000 : 100;
+			const point = (L.EPSG3857 || L.CRS.EPSG3857).project(latlng);
+			const cosLat = Math.max(Math.cos(latlng.lat * Math.PI / 180), 0.01);
+			const offset = radius / cosLat;
+			const retryOffset = Math.min(500 / cosLat, 8 * 40075016.68557849 / (256 * Math.pow(2, zoom)));
+			const bbox = distance => [point.x - distance, point.y - distance, point.x + distance, point.y + distance].join(',');
+			return { bbox: bbox(offset), retryBbox: retryOffset > offset ? bbox(retryOffset) : null };
 		},
 
-		getData(queryString, action) {
-			this._pendingRequest = true;
-			// Construct the query URL to get data from the Overpass Turbo API Interpreter
-			const url = 'https://overpass-api.de/api/interpreter?data=' + encodeURIComponent(queryString) + '&callback=?';
-			this.ajax(url, function(xmlhttp) {
-				this._pendingRequest = false;
-				action(JSON.parse(xmlhttp.responseText));
-			}.bind(this));
-		},
-
-		ajax(xmldocpath, completecallback, errorcallback) {
-			const xmlhttp = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
-			xmlhttp.onreadystatechange = function() {
-				if (xmlhttp.readyState === 4) {
-					if (xmlhttp.status === 200 && completecallback) {
-						completecallback(xmlhttp);
-					} else if (errorcallback) {
-						errorcallback(xmldocpath);
-					}
+		getData(routes, bbox, signal) {
+			return Promise.allSettled(routes.map(async route => {
+				if (!['hiking', 'cycling', 'mtb', 'skating', 'slopes', 'riding'].includes(route)) {
+					throw new Error('Unsupported trail layer: ' + route);
 				}
-			};
-			try {
-				xmlhttp.open('GET', xmldocpath, true);
-				xmlhttp.send(null);
-			} catch (error) {
-				if (errorcallback) {
-					errorcallback(xmldocpath);
-				}
-			}
-			return xmlhttp;
+				const url = 'https://' + route + '.waymarkedtrails.org/api/v1/list/by_area?bbox=' + encodeURIComponent(bbox) + '&limit=100';
+				const response = await fetch(url, { signal: signal });
+				if (!response.ok) throw new Error(route + ': HTTP ' + response.status);
+				const data = await response.json();
+				if (!Array.isArray(data.results)) throw new Error(route + ': invalid response');
+				return { route: route, results: data.results };
+			}));
 		},
 
 		addRouteTag(route_tag) {
@@ -225,76 +182,51 @@
 			return this.route_tags;
 		},
 
-		_toHTML(data) {
-			let i, relation;
-			let route_id, route_name, route_desc, route_ref, osmc_symbol;
-
-			let link, html = "";
-			let ul, li, img;
-
-			let baseUrl, baseSymbol, baseRoute;
-
-			ul = document.createElement('ul');
-			ul.className = "leaflet-trails";
-
-			for (i = 0; i < data.elements.length; i++) {
-				relation = data.elements[i];
-				route_id = relation.id;
-
-				route_name = relation.tags.name ? relation.tags.name : route_id;
-				route_desc = relation.tags.description ? relation.tags.description : false;
-				route_ref = relation.tags.ref ? relation.tags.ref : false;
-
-				route_name = (route_name == route_id && route_desc) ? route_desc : route_name;
-				route_name = (route_name == route_id && route_ref) ? "relation " + route_ref : route_name;
-
-				switch (relation.tags.route) {
-					case 'bicycle':
-						baseUrl = 'cycling';
-						break;
-					case 'horse':
-						baseUrl = 'riding';
-						break;
-					case 'inline_skates':
-						baseUrl = 'skating';
-						break;
-					default:
-						baseUrl = relation.tags.route;
-						break;
+		_toHTML(results, nearby) {
+			const content = document.createElement('div');
+			const list = document.createElement('ul');
+			list.className = 'leaflet-trails';
+			const errors = [];
+			for (const result of results) {
+				if (result.status === 'rejected') {
+					errors.push(result.reason);
+					continue;
 				}
-				baseSymbol = "https://" + baseUrl + ".waymarkedtrails.org/api/symbols?osmc:symbol=";
-				baseRoute = "https://" + baseUrl + ".waymarkedtrails.org/#route?id=";
-				osmc_symbol = relation.tags["osmc:symbol"] ? relation.tags["osmc:symbol"] : false;
-				osmc_symbol = (!osmc_symbol && route_ref) ? "red:white:white:" + route_ref + ":black" : osmc_symbol;
-
-				img = document.createElement('img');
-
-				if (osmc_symbol) {
-					img.src = baseSymbol + encodeURIComponent(osmc_symbol);
-				} else {
-					img.src = baseSymbol + encodeURIComponent("red:white:white");
-					img.style.filter = "hue-rotate(110deg)";
-					img.style.borderRadius = "15px";
+				const route = result.value.route;
+				for (const trail of result.value.results) {
+					const link = document.createElement('a');
+					link.href = 'https://' + route + '.waymarkedtrails.org/#route?id=' + encodeURIComponent(trail.id) + '&type=' + encodeURIComponent(trail.type || 'relation');
+					link.target = '_blank';
+					link.rel = 'noopener noreferrer';
+					if (trail.symbol_id) {
+						const img = document.createElement('img');
+						img.src = 'https://' + route + '.waymarkedtrails.org/api/v1/symbols/id/' + encodeURIComponent(trail.symbol_id);
+						img.alt = '';
+						img.onerror = () => img.remove();
+						link.appendChild(img);
+					}
+					link.appendChild(document.createTextNode(trail.name || (trail.itinerary && trail.itinerary.join(' - ')) || trail.ref || String(trail.id)));
+					const li = document.createElement('li');
+					li.appendChild(link);
+					list.appendChild(li);
 				}
-
-				link = document.createElement('a');
-				link.href = baseRoute + route_id;
-				link.target = "_blank";
-				link.innerHTML = img.outerHTML + route_name;
-
-				li = document.createElement('li');
-				li.appendChild(link);
-				ul.appendChild(li);
-
 			}
-
-			if (ul.children.length == 0) {
-				return false;
+			if (list.children.length) {
+				if (nearby) {
+					const message = document.createElement('p');
+					message.textContent = 'No trails found at the clicked point; showing nearby results.';
+					content.appendChild(message);
+				}
+				content.appendChild(list);
 			}
-
-			html += ul.outerHTML;
-
-			return html;
+			else if (!errors.length) content.appendChild(document.createTextNode('No trails found nearby.'));
+			if (errors.length) {
+				console.error('Waymarked Trails request failed:', errors);
+				const message = document.createElement('p');
+				message.textContent = 'Could not load all trails. Please try again.';
+				content.appendChild(message);
+			}
+			return content;
 		},
 
 		_googleMapsLink(latlng, zoom) {

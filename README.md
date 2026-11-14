@@ -62,11 +62,13 @@ _For a working example see one of the following examples:_
 		const HikingTrails = new L.TileLayer('https://tile.waymarkedtrails.org/{id}/{z}/{x}/{y}.png', {
 			id: 'hiking',
 			pointable: true,
+			crossOrigin: true,
 			attribution: '&copy; <a href="http://waymarkedtrails.org">Sarah Hoffmann</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)',
 		});
 		const CyclingTrails = new L.TileLayer('https://tile.waymarkedtrails.org/{id}/{z}/{x}/{y}.png', {
 			id: 'cycling',
 			pointable: true,
+			crossOrigin: true,
 			attribution: '&copy; <a href="http://waymarkedtrails.org">Sarah Hoffmann</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)',
 		});
 

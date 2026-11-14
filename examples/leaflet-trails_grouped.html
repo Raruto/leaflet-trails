@@ -75,6 +75,7 @@
 						L.tileLayer('https://tile.waymarkedtrails.org/{id}/{z}/{x}/{y}.png', {
 							id: trails[id][j],
 							pointable: true,
+							crossOrigin: true,
 							attribution: '&copy; <a href="http://waymarkedtrails.org">Sarah Hoffmann</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)',
 							maxZoom: 18,
 						})

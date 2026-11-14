@@ -68,6 +68,7 @@
 				overlays[id] = L.tileLayer('https://tile.waymarkedtrails.org/{id}/{z}/{x}/{y}.png', {
 					id: id,
 					pointable: true,
+					crossOrigin: true,
 					attribution: '&copy; <a href="http://waymarkedtrails.org">Sarah Hoffmann</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)',
 				});
 

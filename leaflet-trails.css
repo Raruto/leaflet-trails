@@ -14,13 +14,13 @@
 }
 
 .leaflet-popup .leaflet-trails a img {
-	height: 23px;
-	width: 23px;
+	max-height: 23px;
+	max-width: 40px;
 	vertical-align: text-bottom;
 	margin-right: 5px;
 }
 
-.leaflet-popup .leaflet-trails+.google-maps-link {
+.leaflet-popup .google-maps-link {
 	display: block;
 	text-align: center;
 	font-size: 10px;
