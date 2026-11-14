@@ -29,8 +29,8 @@ _For a working example see one of the following examples:_
     <!-- Leaflet-Pointable -->
     <script src="https://unpkg.com/leaflet-pointable@0.2.1/leaflet-pointable.js"></script>
     <!-- Leaflet-Trails -->
-    <script src="https://unpkg.com/leaflet-trails@0.3.1/leaflet-trails.js"></script>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet-trails@0.3.1/leaflet-trails.css">
+    <script src="https://unpkg.com/leaflet-trails@0.3.2/leaflet-trails.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-trails@0.3.2/leaflet-trails.css">
     ...
     </head>
     ```
