@@ -148,7 +148,8 @@ Then('trail clicks show results, errors and ignore stale responses', async funct
   assert.ok(result.current.urls.every(url => url.includes('/api/v1/list/by_area?bbox=') && url.includes('limit=100')));
   assert.match(result.error, /Could not load all trails/);
   assert.match(result.empty, /No trails found nearby/);
-  assert.match(result.nearby, /showing nearby results.*Nearby route/);
+  assert.match(result.nearby, /Nearby route/);
+  assert.doesNotMatch(result.nearby, /showing nearby results/);
   assert.equal(result.totalRequests, 14);
   assert.ok(result.retryUrls.every(url => new URL(url).hostname === 'hiking.waymarkedtrails.org'));
   const widths = result.retryUrls.map(url => {

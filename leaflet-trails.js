@@ -125,17 +125,15 @@
 			const timeout = setTimeout(() => controller.abort(), 15000);
 
 			this.getData(routes, query.bbox, controller.signal).then(async results => {
-				let nearby = false;
 				if (query.retryBbox && !controller.signal.aborted &&
 					results.every(result => result.status === 'fulfilled' && !result.value.results.length)) {
 					results = await this.getData(routes, query.retryBbox, controller.signal);
-					nearby = true;
 				}
 				clearTimeout(timeout);
 				if (this._trailsRequest !== controller) return;
 				this._trailsRequest = null;
 				if (!this._map.hasLayer(popup)) return;
-				const content = this._toHTML(results, nearby);
+				const content = this._toHTML(results);
 				const mapsLink = document.createElement('div');
 				mapsLink.innerHTML = this._googleMapsLink(e.latlng, zoom);
 				content.appendChild(mapsLink.firstChild);
@@ -182,7 +180,7 @@
 			return this.route_tags;
 		},
 
-		_toHTML(results, nearby) {
+		_toHTML(results) {
 			const content = document.createElement('div');
 			const list = document.createElement('ul');
 			list.className = 'leaflet-trails';
