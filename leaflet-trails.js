@@ -212,11 +212,6 @@
 				}
 			}
 			if (list.children.length) {
-				if (nearby) {
-					const message = document.createElement('p');
-					message.textContent = 'No trails found at the clicked point; showing nearby results.';
-					content.appendChild(message);
-				}
 				content.appendChild(list);
 			}
 			else if (!errors.length) content.appendChild(document.createTextNode('No trails found nearby.'));

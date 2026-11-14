@@ -3,6 +3,8 @@
 	list-style-type: none;
 	margin: 1em 0;
 	padding: 0;
+	max-height: 35vh;
+	overflow-y: auto;
 }
 
 .leaflet-popup .leaflet-trails a {

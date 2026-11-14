@@ -5,6 +5,10 @@
 
 A Leaflet plugin that allows easy integration with Lonvia's Waymarked Trails Site
 
+<p align="center">
+    <a href="https://raruto.github.io/leaflet-trails/examples/leaflet-trails.html"><img src="https://raruto.github.io/img/leaflet-trails.png" alt="Route from Lonvia's Waymarked Trails" /></a>
+</p>
+
 _For a working example see one of the following examples:_
 
 - [simple](https://raruto.github.io/leaflet-trails/examples/leaflet-trails_simple.html)
